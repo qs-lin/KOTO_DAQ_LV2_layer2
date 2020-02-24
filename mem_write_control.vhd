@@ -23,7 +23,7 @@
 -- 2019-09-01  1.0      Qisen   write this function in verilog.  
 -- 2020-01-02  2.0      Qisen   have timing violations. re-write in vhdl. remove some functions. 
 --                              the previous version has much more detailed error information. 
---                              but this version only checks if the data is corrupted but we don't know
+--                              but this version only checks if the data is corrupted and we don't know
 --                              which part exactly 
 -------------------------------------------------------------------------------
 library ieee;
