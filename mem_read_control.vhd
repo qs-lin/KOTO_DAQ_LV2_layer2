@@ -1,3 +1,31 @@
+-------------------------------------------------------------------------------
+-- Title      : Memory read control 
+-- Project    : DAQ_LV2
+-------------------------------------------------------------------------------
+-- File       : mem_read_control.vhd
+-- Author     : Qisen Lin  <qslin@uchicago.edu>
+-- Company    : University of Chicago
+-- Created    : 2019-10-01
+-- Last update: 2020-02-17
+-- Platform   :
+-- Standard   : VHDL'93/02
+-------------------------------------------------------------------------------
+-- Description:
+-- Extract the size information from FIFO and read the same amount of data from memory accordingly 
+-- Chop the large event into chunks to accommodate Jumbo Ethernet MTU
+-- Add one last chunk for each event for the convenience of LV3
+-------------------------------------------------------------------------------
+-- Copyright (c) 2019 University of Chicago
+-------------------------------------------------------------------------------
+-- Revisions  :
+-- Date        Version  Author  Description
+-- 2019-10-01  1.0      Qisen   read the size information and then read the data out non-stoppingly 
+-- 2019-11-15  2.0      Qisen   will chop one event into pieces to accommodate Ethernet MTU 
+-- 2019-11-16  3.0      Qisen   interface with EFG 
+-- 2020-02-17  4.0      Qisen   interface with EFG (backpressure) and LV3 (DISCRIMINATOR) 
+-------------------------------------------------------------------------------
+
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;

@@ -1,3 +1,31 @@
+-------------------------------------------------------------------------------
+-- Title      : Memory write control
+-- Project    : DAQ_LV2
+-------------------------------------------------------------------------------
+-- File       : mem_write_control_v3.vhd
+-- Author     : Qisen Lin  <qslin@uchicago.edu>
+-- Company    : University of Chicago
+-- Created    : 2019-10-01
+-- Last update: 2020-01-15
+-- Platform   :
+-- Standard   : VHDL'93/02
+-------------------------------------------------------------------------------
+-- Description:
+-- Receive data from Layer1 OFC 
+-- Filter junk and noise. Receive and save valid packets
+-- The paylaod of each event will be written into mem_data. The size of each event is 
+-- stored in mem_size and the L1A (event ID) is written into mem_L1A 
+-------------------------------------------------------------------------------
+-- Copyright (c) 2019 University of Chicago
+-------------------------------------------------------------------------------
+-- Revisions  :
+-- Date        Version  Author  Description
+-- 2019-09-01  1.0      Qisen   write this function in verilog.  
+-- 2020-01-02  2.0      Qisen   have timing violations. re-write in vhdl. remove some functions. 
+--                              the previous version has much more detailed error information. 
+--                              but this version only checks if the data is corrupted but we don't know
+--                              which part exactly 
+-------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -11,7 +39,7 @@ entity mem_write_control_v3 is
     --Asynchronous reset
     reset              : in  std_logic;
     data_in            : in  std_logic_vector(31 downto 0);
-    mem_upper_limit : in  std_logic_vector(17 downto 0);     
+    mem_upper_limit    : in  std_logic_vector(17 downto 0);     
 
     data_out           : out std_logic_vector(31 downto 0) := (others => '0');
     data_wr_req        : out std_logic;

@@ -1,11 +1,11 @@
 -------------------------------------------------------------------------------
--- Title      : Ethernet Simulated Data Generator
--- Project    : 
+-- Title      : Ethernet Frame Generator
+-- Project    : DAQ_LV2 
 -------------------------------------------------------------------------------
--- File       : Ethernet_data_generator.vhd
+-- File       : Ethernet_frame_generator.vhd
 -- Author     : Qisen Lin  <qslin@uchicago.edu>  
 -- Company    : University of Chicago
--- Created    : 2019-11-02
+-- Created    : 2019-10-24
 -- Last update: 2020-02-17
 -- Platform   : 
 -- Standard   : VHDL'93/02
@@ -20,9 +20,10 @@
 -------------------------------------------------------------------------------
 -- Revisions  :                
 -- Date        Version  Author  Description
--- 2019-10-24  1.0      Ryan    Created
--- 2019-11-01  2.0      Qisen   Modified  
--- 2020-02-17  3.0      Qisen   Modified  
+-- 2019-10-24  1.0      Ryan    generate Eth header, IP header, UDP header 
+-- 2019-11-01  2.0      Qisen   interface with mem_read_control, LV2 memory 
+-- 2019-02-01  3.0      Qisen   interface with LV3 PC farm 
+-- 2020-02-17  4.0      Qisen   solve the backpressure problem fron TSE transceiver 
 -------------------------------------------------------------------------------
 
 
