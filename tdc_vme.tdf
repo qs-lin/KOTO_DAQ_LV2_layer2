@@ -1,7 +1,6 @@
 --
-----  2003 by Mircea Bogdan
-----  2019 extended by Qisen 
---
+----2003 by Mircea Bogdan
+----2019 extended for OFC board by Qisen
 
 title "vme block";
 
@@ -11,105 +10,105 @@ subdesign tdc_vme
 
 (
 
-  vmewrite          : input;      -- qualifies address value (0=Read, 1=Write)
-  vmeas             : input;      -- signal for latching address - used for data also, in Pulsar
-  vmeds             : input;      -- signal for latching data - not used in Pulsar
+  vmewrite        	: input;      -- qualifies address value (0=Read, 1=Write)
+  vmeas           	: input;      -- signal for latching address - used for data also, in Pulsar
+  vmeds           	: input;      -- signal for latching data - not used in Pulsar
  
   id                : input;      -- which chip am I? (2 chips on board)
-  sysclk            : input;      -- VME system clock or other clock(possibly useful) 
+  sysclk          	: input;      -- VME system clock or other clock(possibly useful) 
    -- VME I/O
-  addr[26..2]       : input;      -- address (minus GA, unused 26-24,1-0)
-  data[31..0]       : bidir;      -- vme data lines
- -- rd_data0[31..0]     : input;        -- data from memory0 for VME read-out
-  rd_data1[31..0]   : input;
-  rd_data2[31..0]   : input;
-  rd_data3[31..0]   : input;
-  rd_data4[31..0]   : input;
-  rd_data5[31..0]   : input;
-  rd_data6[31..0]   : input;
-  rd_data7[31..0]   : input;
-  rd_data8[31..0]   : input;
-  rd_data9[31..0]   : input;
+  addr[26..2]     	: input;      -- address (minus GA, unused 26-24,1-0)
+  data[31..0]     	: bidir;      -- vme data lines
+ -- rd_data0[31..0] 	: input;		-- data from memory0 for VME read-out
+  rd_data1[31..0] 	: input;
+  rd_data2[31..0] 	: input;
+  rd_data3[31..0] 	: input;
+  rd_data4[31..0] 	: input;
+  rd_data5[31..0] 	: input;
+  rd_data6[31..0] 	: input;
+  rd_data7[31..0] 	: input;
+  rd_data8[31..0] 	: input;
+  rd_data9[31..0] 	: input;
  
  
-  status_bus0[31..0]    : input;
-  status_bus1[31..0]    : input;
-  status_bus2[31..0]    : input;
-  status_bus3[31..0]    : input;
-  status_bus4[31..0]    : input;
+  status_bus0[31..0]	: input;
+  status_bus1[31..0]	: input;
+  status_bus2[31..0]	: input;
+  status_bus3[31..0]	: input;
+  status_bus4[31..0]	: input;
   
-  status_reg100[31..0]  : input;
-  status_reg101[31..0]  : input;
-  status_reg102[31..0]  : input;
-  status_reg103[31..0]  : input;
-  status_reg104[31..0]  : input;
-  status_reg105[31..0]  : input;
-  status_reg106[31..0]  : input;
-  status_reg107[31..0]  : input;
-  status_reg108[31..0]  : input;
-  status_reg109[31..0]  : input;
-  status_reg110[31..0]  : input;
-  status_reg111[31..0]  : input;
-  status_reg112[31..0]  : input;
-  status_reg113[31..0]  : input;
-  status_reg114[31..0]  : input;
-  status_reg115[31..0]  : input;
-  status_reg116[31..0]  : input;
-  status_reg117[31..0]  : input;
-  status_reg118[31..0]  : input;
-  status_reg119[31..0]  : input;
-  status_reg120[31..0]  : input;
+  status_reg100[31..0]	: input;
+  status_reg101[31..0]	: input;
+  status_reg102[31..0]	: input;
+  status_reg103[31..0]	: input;
+  status_reg104[31..0]	: input;
+  status_reg105[31..0]	: input;
+  status_reg106[31..0]	: input;
+  status_reg107[31..0]	: input;
+  status_reg108[31..0]	: input;
+  status_reg109[31..0]	: input;
+  status_reg110[31..0]	: input;
+  status_reg111[31..0]	: input;
+  status_reg112[31..0]	: input;
+  status_reg113[31..0]	: input;
+  status_reg114[31..0]	: input;
+  status_reg115[31..0]	: input;
+  status_reg116[31..0]	: input;
+  status_reg117[31..0]	: input;
+  status_reg118[31..0]	: input;
+  status_reg119[31..0]	: input;
+  status_reg120[31..0]	: input;
 
 
-    
-  test_mode         : output;     -- puts the chip in test mode: write memories, registers,etc.
-  reset             : output;     -- resets the chip
-  ena_simu          : output;     -- switch from real data to test data
-  SPI_start         : output;
+	
+  test_mode       	: output;     -- puts the chip in test mode: write memories, registers,etc.
+  reset           	: output;     -- resets the chip
+  ena_simu		    : output;     -- switch from real data to test data
+  SPI_start		    : output;
   
-  vmel2a_mode       : output;     -- switch level2 accept from DAQ to VME
-  reset1            : output;     -- one more reset  
-  halt_mode         : output;     -- freeze content of memories
+  vmel2a_mode	    : output;     -- switch level2 accept from DAQ to VME
+  reset1			: output;     -- one more reset  
+  halt_mode			: output;     -- freeze content of memories
   
-  vme_wr_en1        : output;
-  vme_wr_en2        : output;
-  vme_wr_en3        : output;
-  vme_wr_en4        : output;
-  vme_wr_en5        : output;
-  vme_wr_en6        : output;
-  vme_wr_en7        : output;
-  vme_wr_en8        : output;  
+  vme_wr_en1      	: output;
+  vme_wr_en2   	  	: output;
+  vme_wr_en3      	: output;
+  vme_wr_en4      	: output;
+  vme_wr_en5      	: output;
+  vme_wr_en6    	 : output;
+  vme_wr_en7    	 : output;
+  vme_wr_en8      	: output;  
   
   
-  register1[31..0]  : output;     -- VME accessible control register
-  register2[31..0]  : output;     -- same
-  register3[31..0]  : output;     -- same
-  register4[31..0]  : output;     -- same
-  register5[31..0]  : output;     -- same
-  register6[31..0]  : output;     -- same
-  register7[31..0]  : output;     -- same
-  register8[31..0]  : output;     -- same
+  register1[31..0]	: output;     -- VME accessible control register
+  register2[31..0]	: output;     -- same
+  register3[31..0]	: output;     -- same
+  register4[31..0]	: output;     -- same
+  register5[31..0]	: output;     -- same
+  register6[31..0]	: output;     -- same
+  register7[31..0]	: output;     -- same
+  register8[31..0]	: output;     -- same
   
-  reg20[31..0]  : output;     -- same
-  reg21[31..0]  : output;     -- same
-  reg22[31..0]  : output;     -- same
-  reg23[31..0]  : output;     -- same
-  reg24[31..0]  : output;     -- same
-  reg25[31..0]  : output;     -- same
-  reg26[31..0]  : output;     -- same
-  reg27[31..0]  : output;     -- same
-  reg28[31..0]  : output;     -- same
-  reg29[31..0]  : output;     -- same
-  reg30[31..0]  : output;     -- same
-  reg31[31..0]  : output;     -- same
-  reg32[31..0]  : output;     -- same
-  reg33[31..0]  : output;     -- same
-  reg34[31..0]  : output;     -- same
-  reg35[31..0]  : output;     -- same
-  reg36[31..0]  : output;     -- same
-  reg37[31..0]  : output;     -- same
-  reg38[31..0]  : output;     -- same
-  reg39[31..0]  : output;     -- same
+  reg20[31..0]	: output;     -- same
+  reg21[31..0]	: output;     -- same
+  reg22[31..0]	: output;     -- same
+  reg23[31..0]	: output;     -- same
+  reg24[31..0]	: output;     -- same
+  reg25[31..0]	: output;     -- same
+  reg26[31..0]	: output;     -- same
+  reg27[31..0]	: output;     -- same
+  reg28[31..0]	: output;     -- same
+  reg29[31..0]	: output;     -- same
+  reg30[31..0]	: output;     -- same
+  reg31[31..0]	: output;     -- same
+  reg32[31..0]	: output;     -- same
+  reg33[31..0]	: output;     -- same
+  reg34[31..0]	: output;     -- same
+  reg35[31..0]	: output;     -- same
+  reg36[31..0]	: output;     -- same
+  reg37[31..0]	: output;     -- same
+  reg38[31..0]	: output;     -- same
+  reg39[31..0]	: output;     -- same
 
 
   
@@ -124,7 +123,7 @@ subdesign tdc_vme
 
 )
 variable
-  testdatamodereg  : dff;       -- test data mode register
+  testdatamodereg  : dff;		-- test data mode register
   testdatamode     : node;      -- alias for test data mode register
   haltmodereg      : dff;       -- halt mode register
   haltmode         : node;      -- alias for halt mode register
@@ -132,34 +131,34 @@ variable
   testmode         : node;      -- alias for test mode register
   vmel2amodereg    : dff;       -- vmel2a mode register
   vmel2amode       : node;      -- alias for vmel2a mode register
-  ctrlreg1[31..0]  : dff;       -- misc control registers
-  ctrlreg2[31..0]  : dff;       -- misc control registers
-  ctrlreg3[31..0]  : dff;       -- misc control registers
-  ctrlreg4[31..0]  : dff;       -- misc control registers
-  ctrlreg5[31..0]  : dff;       -- misc control registers
-  ctrlreg6[31..0]  : dff;       -- misc control registers
-  ctrlreg7[31..0]  : dff;       -- misc control registers
-  ctrlreg8[31..0]  : dff;       -- misc control registers
-  m_ctrlreg20[31..0]  : dff;        -- misc control registers
-  m_ctrlreg21[31..0]  : dff;        -- misc control registers
-  m_ctrlreg22[31..0]  : dff;        -- misc control registers
-  m_ctrlreg23[31..0]  : dff;        -- misc control registers
-  m_ctrlreg24[31..0]  : dff;        -- misc control registers
-  m_ctrlreg25[31..0]  : dff;        -- misc control registers
-  m_ctrlreg26[31..0]  : dff;        -- misc control registers
-  m_ctrlreg27[31..0]  : dff;        -- misc control registers
-  m_ctrlreg28[31..0]  : dff;        -- misc control registers
-  m_ctrlreg29[31..0]  : dff;        -- misc control registers
-  m_ctrlreg30[31..0]  : dff;        -- misc control registers
-  m_ctrlreg31[31..0]  : dff;        -- misc control registers
-  m_ctrlreg32[31..0]  : dff;        -- misc control registers
-  m_ctrlreg33[31..0]  : dff;        -- misc control registers
-  m_ctrlreg34[31..0]  : dff;        -- misc control registers
-  m_ctrlreg35[31..0]  : dff;        -- misc control registers
-  m_ctrlreg36[31..0]  : dff;        -- misc control registers
-  m_ctrlreg37[31..0]  : dff;        -- misc control registers
-  m_ctrlreg38[31..0]  : dff;        -- misc control registers
-  m_ctrlreg39[31..0]  : dff;        -- misc control registers
+  ctrlreg1[31..0]  : dff;		-- misc control registers
+  ctrlreg2[31..0]  : dff;		-- misc control registers
+  ctrlreg3[31..0]  : dff;		-- misc control registers
+  ctrlreg4[31..0]  : dff;		-- misc control registers
+  ctrlreg5[31..0]  : dff;		-- misc control registers
+  ctrlreg6[31..0]  : dff;		-- misc control registers
+  ctrlreg7[31..0]  : dff;		-- misc control registers
+  ctrlreg8[31..0]  : dff;		-- misc control registers
+  m_ctrlreg20[31..0]  : dff;		-- misc control registers
+  m_ctrlreg21[31..0]  : dff;		-- misc control registers
+  m_ctrlreg22[31..0]  : dff;		-- misc control registers
+  m_ctrlreg23[31..0]  : dff;		-- misc control registers
+  m_ctrlreg24[31..0]  : dff;		-- misc control registers
+  m_ctrlreg25[31..0]  : dff;		-- misc control registers
+  m_ctrlreg26[31..0]  : dff;		-- misc control registers
+  m_ctrlreg27[31..0]  : dff;		-- misc control registers
+  m_ctrlreg28[31..0]  : dff;		-- misc control registers
+  m_ctrlreg29[31..0]  : dff;		-- misc control registers
+  m_ctrlreg30[31..0]  : dff;		-- misc control registers
+  m_ctrlreg31[31..0]  : dff;		-- misc control registers
+  m_ctrlreg32[31..0]  : dff;		-- misc control registers
+  m_ctrlreg33[31..0]  : dff;		-- misc control registers
+  m_ctrlreg34[31..0]  : dff;		-- misc control registers
+  m_ctrlreg35[31..0]  : dff;		-- misc control registers
+  m_ctrlreg36[31..0]  : dff;		-- misc control registers
+  m_ctrlreg37[31..0]  : dff;		-- misc control registers
+  m_ctrlreg38[31..0]  : dff;		-- misc control registers
+  m_ctrlreg39[31..0]  : dff;		-- misc control registers
 
   
  
@@ -168,22 +167,22 @@ variable
   dataout[31..0]  : tri;        -- vme readout gets muxed here
 
   -- nodes holding results of VME address decoding
-  vme_reset       : node;       -- reset output for chip
-  vme_reset1      : node;      -- reset output for chip
-  vme_ena_simu    : node;
-  vme_SPI_start   : node;
+  vme_reset       : node;		-- reset output for chip
+  vme_reset1      : node;		-- reset output for chip
+  vme_ena_simu	  : node;
+  vme_SPI_start	  : node;
   vme_testmodewrite : node;     -- write test mode register
   vme_testdatamodewrite : node;     -- write test mode register
   vme_haltmodewrite : node;     -- write test mode register
   vme_vmel2amodewrite : node;   -- write vmel2a mode register
-  vme_ctrlwrite1   : node;      -- write control register1
-  vme_ctrlwrite2   : node;      -- write control register2
-  vme_ctrlwrite3   : node;      -- write control register3
-  vme_ctrlwrite4   : node;      -- write control register4
-  vme_ctrlwrite5   : node;      -- write control register5
-  vme_ctrlwrite6   : node;      -- write control register6
-  vme_ctrlwrite7   : node;      -- write control register7
-  vme_ctrlwrite8   : node;      -- write control register8
+  vme_ctrlwrite1   : node;		-- write control register1
+  vme_ctrlwrite2   : node;		-- write control register2
+  vme_ctrlwrite3   : node;		-- write control register3
+  vme_ctrlwrite4   : node;		-- write control register4
+  vme_ctrlwrite5   : node;		-- write control register5
+  vme_ctrlwrite6   : node;		-- write control register6
+  vme_ctrlwrite7   : node;		-- write control register7
+  vme_ctrlwrite8   : node;		-- write control register8
   m_ctrlwrite20   : node;
   m_ctrlwrite21   : node;
   m_ctrlwrite22   : node;
@@ -346,10 +345,10 @@ begin
    vme_wr_en7 = vmewrite & (addr[26]== id)& (addr[25..20]==H"17") & (testmode==H"1");
  
   -- do reset via vme (chip has to be in "test-mode") - works on bouth chips at once
-   vme_reset = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"11");
-   vme_reset1 = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"12");
-   vme_SPI_start = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"13");
-   vme_ena_simu = vmeas & vmewrite &(addr[25..2]==H"14");
+ vme_reset = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"11");
+ vme_reset1 = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"12");
+ vme_SPI_start = vmeas & vmewrite &(testmode==H"1")&(addr[25..2]==H"13");
+ vme_ena_simu = vmeas & vmewrite &(addr[25..2]==H"14");
   -- read memorys via vme
  
   if (addr[25..20]==H"1") then
@@ -617,4 +616,3 @@ begin
 
   
 end;
-

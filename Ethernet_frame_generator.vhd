@@ -1,29 +1,23 @@
 -------------------------------------------------------------------------------
--- Title      : Ethernet Frame Generator
--- Project    : DAQ_LV2 
+-- Title      : Ethernet Simulated Data Generator
+-- Project    : 
 -------------------------------------------------------------------------------
--- File       : Ethernet_frame_generator.vhd
+-- File       : Ethernet_data_generator.vhd
 -- Author     : Qisen Lin  <qslin@uchicago.edu>  
 -- Company    : University of Chicago
--- Created    : 2019-10-24
--- Last update: 2020-02-17
+-- Created    : 2018-10-24
+-- Last update: 2018-10-24
 -- Platform   : 
 -- Standard   : VHDL'93/02
 -------------------------------------------------------------------------------
--- Description: 
--- Receive data from memory and encapsulate it inside the Ethernet frame, on top of IPV4 
--- Chop the large event into chunks to accommodate Jumbo Ethernet MTU 
--- Add LV3 headers used by KOTO LV3 
--- Add functions to deal with backpressure by ff_tx_septy 
+-- Description: Generates ethernet, IPv4, and UDP headers for transmission over
+-- ethernet line. Generate consecutive counters and encapsulate in Ethernet frame 
 -------------------------------------------------------------------------------
--- Copyright (c) 2019 University of Chicago
+-- Copyright (c) 2018 University of Chicago
 -------------------------------------------------------------------------------
 -- Revisions  :                
 -- Date        Version  Author  Description
--- 2019-10-24  1.0      Ryan    generate Eth header, IP header, UDP header 
--- 2019-11-01  2.0      Qisen   interface with mem_read_control, LV2 memory 
--- 2019-02-01  3.0      Qisen   interface with LV3 PC farm 
--- 2020-02-17  4.0      Qisen   solve the backpressure problem fron TSE transceiver 
+-- 2018-10-24  1.0      Qisen  Created
 -------------------------------------------------------------------------------
 
 
@@ -38,11 +32,11 @@ entity Ethernet_frame_generator is
     reset           : in  std_logic;
     ff_tx_rdy       : in  std_logic;
     ff_tx_a_full    : in  std_logic;
-     --Sent from mem_read_control. Initiate ethernet frame
+	--Sent from mem_read_control. Initiate ethernet frame
     data_start      : in  std_logic;
-     --Input data
-    data_in         : in  std_logic_vector(31 downto 0);
-    data_valid      : in  std_logic;
+	--Input data
+	data_in         : in  std_logic_vector(31 downto 0);
+	data_valid      : in  std_logic;
     --Output data
     ff_tx_data      : out std_logic_vector(31 downto 0);
     --High when data is valid
@@ -56,34 +50,34 @@ entity Ethernet_frame_generator is
     --Ethernet frame header
     ether_header_0  : in  std_logic_vector(31 downto 0);       -- dma[47..16]
     ether_header_1  : in  std_logic_vector(31 downto 0);       -- dma[15..0] & sma[47..32]
-    ether_header_2  : in  std_logic_vector(31 downto 0);       -- sma[31..0]
-     -- Standard Ethernet 0x0800; Jumbo Ethernet 0x8870
+	ether_header_2  : in  std_logic_vector(31 downto 0);       -- sma[31..0]
+	-- Standard Ethernet 0x0800; Jumbo Ethernet 0x8870
     ether_type      : in  std_logic_vector(15 downto 0);
     --IPv4 Header info
     source_ip       : in  std_logic_vector(31 downto 0);
     dest_ip         : in  std_logic_vector(31 downto 0);
-    port_id         : in  std_logic_vector(31 downto 0);
-     
-     --Interface to mem_read_control
-     --header is done. You can send the data in
-    payload_rdy     : out std_logic;
-    --current event is done. You can send another packet
-    fg_rdy          : out std_logic;
-     
-    error           : out std_logic_vector(4 downto 0);
-    -- handling buffer data. Forbid mem_read_control from requiring new data from the ram
-    is_buff         : out std_logic;
-    is_valid        : out std_logic;
-    go_to_buff_port : out std_logic;
-    ff_tx_septy     : in  std_logic;
-    event_id        : in  std_logic_vector(31 downto 0);
-    nListenPorts    : in  std_logic_vector(3 downto 0);
-    chunk_id        : in  std_logic_vector(31 downto 0);
-    crate_id        : in  std_logic_vector(7 downto 0);
-    error_buff      : out std_logic;
-    spill_id        : in  std_logic_vector(8 downto 0);
-    lv2_packet      : in  std_logic_vector(14 downto 0);
-    lv2_info_valid  : in  std_logic
+	port_id         : in  std_logic_vector(31 downto 0);
+	 
+	--Interface to mem_read_control
+	--header is done. You can send the data in
+	payload_rdy     : out std_logic;
+	--current event is done. You can send another packet
+	fg_rdy          : out std_logic;
+	 
+	error           : out std_logic_vector(4 downto 0);
+	-- handling buffer data. Forbid mem_read_control from requiring new data from the ram
+	is_buff         : out std_logic;
+	is_valid        : out std_logic;
+	go_to_buff_port : out std_logic;
+	ff_tx_septy     : in  std_logic;
+	event_id        : in  std_logic_vector(31 downto 0);
+	nListenPorts    : in  std_logic_vector(3 downto 0);
+	chunk_id        : in  std_logic_vector(31 downto 0);
+	crate_id        : in  std_logic_vector(7 downto 0);
+	error_buff      : out std_logic;
+	spill_id        : in  std_logic_vector(8 downto 0);
+	lv2_packet      : in  std_logic_vector(14 downto 0);
+	lv2_info_valid  : in  std_logic
     );
 end Ethernet_frame_generator;
 
@@ -94,19 +88,19 @@ architecture behavior of Ethernet_frame_generator is
   -- when ff_tx_a_full is on, data will be stored here temporarily.
   -- wait untill ff_tx_a_full is off. And send data in this buffer zone first and go back to new data
     
-  -- I think I only need two. Just in case not enough.   
+  -- I think I only need two. Just in case not enough. 	 
   type data_array is array (0 to 17) of word;
   signal buffer_data        : data_array;
   signal pipe_data          : data_array;
   signal pipe_dval          : std_logic := '1';
   
   type state_type is (IDLE, CALCULATION, WAIT_SEC_EMPTY, WAIT_HEADER,
-                      ETH0, ETH1, ETH2, ETH3, 
+							 ETH0, ETH1, ETH2, ETH3, 
                       IP0,  IP1,  IP_PAUSE0,  IP_PAUSE1, IP_PAUSE2,  --Pause for checksum computation
                       IP2,  IP3,  IP4,
                       UDP0, UDP1, EVENT_ID_STATE, CHUNK_ID_STATE, DISCRIMINATOR,
                       DATA, --BUFFER_WAIT, BUFFER_STATE, 
-                             DONE
+							 DONE
                       );
   signal state      : state_type := IDLE;
   signal next_state : state_type := IDLE;
@@ -193,31 +187,32 @@ begin
   state_machine : process(reset, clock)
     variable nstate         : state_type := IDLE; 
     variable counter_sent   : integer    := 0;
-    variable counter_head   : integer    := 0;
-    variable dest_port      : unsigned(15 downto 0):= (others => '0');  
+	variable counter_head   : integer    := 0;
+	variable dest_port      : unsigned(15 downto 0):= (others => '0');	 
 
   begin
     if (reset = '1') then
-       --interface
-      error_buff       <= '0';     
+	  --interface
+	  error_buff       <= '0';     
       ff_tx_data       <= (others => '0');
       ff_tx_wren       <= '0';
       ff_tx_eop        <= '0';
       ff_tx_sop        <= '0';
       fg_rdy           <= '0';
       payload_rdy      <= '0';
-        
+		
       --variable
       next_state       <= IDLE;
       counter_sent     := 0;
       counter_head     := 0;
-      dest_port        := ( port_id_sig(15 downto 0) ); 
+	  dest_port        := ( port_id_sig(15 downto 0) );	
 
+      --signal			
     elsif rising_edge(clock) then
-     
-        
+	 
+		
       case next_state is
-          when IDLE =>
+        when IDLE =>
 
           ff_tx_data        <= (others => '0');
           ff_tx_wren        <= '0';
@@ -237,11 +232,11 @@ begin
             next_state  <= IDLE;
           end if;
   
----- Modified this logic by Qisen @ 2019/10/24
----- I don't want the system calculate the headers all the time in IDEL stage
----- So I add this CALCULATION stage
+          ---- Modified this logic by Qisen @ 2018/11/24
+          ---- I don't want the system calculate the headers all the time in IDEL stage
+          ---- So I add this CALCULATION stage
 
-             
+			 
         when CALCULATION =>
           ff_tx_data        <= (others => '0');
           ff_tx_wren        <= '0';
@@ -260,24 +255,24 @@ begin
           eth_header(3) <= ether_header_2_sig(15 downto 0) & ether_type_sig;
 
           next_state <= WAIT_SEC_EMPTY;
-             
-          -- make sure the tse_buffer has enough space to send ethernet_frame data   
-        when WAIT_SEC_EMPTY =>
-          if( ff_tx_septy = '1') then 
-            next_state      <= WAIT_HEADER;
-          else
-            next_state      <= next_state; 
-          end if;    
-             
-        when WAIT_HEADER =>
-          counter_head     := counter_head + 1;
-          if(counter_head = 14) then 
-            next_state      <= ETH0;
-            counter_head     := 0;
-          else
-            next_state      <= next_state; 
-          end if;    
-                         
+			 
+		  -- make sure the tse_buffer has enough space to send ethernet_frame data	 
+		  when WAIT_SEC_EMPTY =>
+		    if( ff_tx_septy = '1') then 
+			  next_state      <= WAIT_HEADER;
+			else
+			  next_state      <= next_state; 
+			end if;	
+			 
+		  when WAIT_HEADER =>
+		    counter_head     := counter_head + 1;
+		    if(counter_head = 14) then 
+			  next_state      <= ETH0;
+			  counter_head     := 0;
+			else
+			  next_state      <= next_state; 
+			end if;	
+						 
         when ETH0 =>
           ff_tx_data        <= eth_header(0);
           ff_tx_wren        <= ff_tx_rdy;
@@ -310,7 +305,7 @@ begin
           ff_tx_wren        <= '0';
           next_state        <= IP_PAUSE1;
 
-             
+			 
 --Based on the simulation, we only need pause for 1 clock.
 --But we can stil pause for two for safety
 
@@ -319,14 +314,14 @@ begin
           ff_tx_wren        <= '0';
           next_state        <= IP_PAUSE2;      
 
-          -- This wait stage is added back on 2019/12/12 by Qisen
-          -- when step=8, not sure whether ip_checksum is assigned before or after 
-          -- ff_tx_data is assigned. So add this back to make sure ip_checksum is updated 
-          -- before encapsulated in IP2  
+		  -- This wait stage is added back on 2019/12/12 by Qisen
+		  -- when step=8, not sure whether ip_checksum is assigned before or after 
+		  -- ff_tx_data is assigned. So add this back to make sure ip_checksum is updated 
+		  -- before encapsulated in IP2  
         when IP_PAUSE2 =>
           ff_tx_data        <= (others => '1');
           ff_tx_wren        <= '0';
-          next_state        <= IP2;              
+          next_state        <= IP2;  			 
 
         when IP2 =>
           ff_tx_data        <= ip_ttl & protocol_sig & ip_checksum;
@@ -352,38 +347,38 @@ begin
 
         when UDP1 =>
           -- Length in bytes followed by (unused) checksum
-             -- 2 UDP header + 3 LV3 header 
+			 -- 2 UDP header + 3 LV3 header 
           ff_tx_data    <= std_logic_vector(resize(unsigned(payload_len)+to_unsigned(5, payload_len'length), 14))& "00" & X"00_00";
           next_state    <= EVENT_ID_STATE;
-             
+			 
         when EVENT_ID_STATE =>
           --Event ID
           ff_tx_data    <= event_id_sig;
-          next_state    <= CHUNK_ID_STATE;           
+          next_state    <= CHUNK_ID_STATE;			 
 
         when CHUNK_ID_STATE =>
           --Chunk ID
           ff_tx_data    <= chunk_id_sig; 
-          next_state    <= DISCRIMINATOR;   
-             
+          next_state    <= DISCRIMINATOR;	
+			 
         when DISCRIMINATOR =>
           --Used to discriminate payload and footer
           if( unsigned(payload_len) = 0) then
             --ff_tx_data    <= X"080000" & crate_id;
-            --ff_tx_data    <= X"000" & "000" & spill_id & crate_id;                
+            --ff_tx_data    <= X"000" & "000" & spill_id & crate_id;				
             ff_tx_data    <= lv2_packet & spill_id & crate_id;
-            next_state    <= DONE;
-            ff_tx_eop     <= '1';
-            payload_rdy   <= '1';    
+			next_state    <= DONE;
+			ff_tx_eop     <= '1';
+            payload_rdy   <= '1';	
           else
-            ff_tx_data    <= (others => '0');
-            next_state    <= DATA;      
+		    ff_tx_data    <= (others => '0');
+            next_state    <= DATA;		
             payload_rdy   <= '1'; 
-          end if;    
-                         
-             
+          end if;	
+			 			 
+			 
         when DATA =>  
-          payload_rdy     <= '0';    
+          payload_rdy     <= '0';	  
           --ff_tx_data    <= std_logic_vector(to_unsigned(counter, ff_tx_data'length));
           --ff_tx_eop     <='0';
           ff_tx_data        <= data_in;
@@ -391,21 +386,21 @@ begin
           if(data_valid  = '1') then
             ff_tx_wren    <= '1';
             counter_sent  := counter_sent + 1;
-          else 
-            ff_tx_wren    <= '0';
-            counter_sent  := counter_sent;
-          end if;          
-             
+		  else 
+		    ff_tx_wren    <= '0';
+		    counter_sent  := counter_sent;
+	      end if;			
+			 
           if(counter_sent>=to_integer(unsigned(payload_len))) then
-            --if(counter_v1>=to_integer(unsigned(payload_len)) and  ff_tx_septy = '1') then         
-            --ff_tx_data      <= X"0AAAAAAA";       
+            --if(counter_v1>=to_integer(unsigned(payload_len)) and  ff_tx_septy = '1') then		 
+            --ff_tx_data      <= X"0AAAAAAA";		 
             next_state      <= DONE;
             ff_tx_eop       <= '1';
             --ff_tx_wren_sig  <= '1';
-          end if;        
-          
+          end if;		
+		  
         when DONE =>
-          fg_rdy            <= '1'; 
+		  fg_rdy            <= '1'; 
           ff_tx_data        <= (others => '0');
           ff_tx_eop         <= '0';
           ff_tx_wren        <= '0';
@@ -416,7 +411,7 @@ begin
 
       end case;
       --state <= next_state;
-        
+		
     end if;
 
   end process state_machine;
@@ -450,9 +445,9 @@ begin
         else
           step := -1;
         end if;
-        -- wait for one clock to finish the CALCULATION state  
-        elsif (step<=0) then  
-          step := step +1;
+		-- wait for one clock to finish the CALCULATION state  
+		elsif (step<=0) then  
+		  step := step +1;
       elsif (step <= ip_header'length) then
         --Add everything to our sum
         sum  := sum + unsigned(ip_header(step-1)(31 downto 16))+unsigned(ip_header(step-1)(15 downto 0));
@@ -471,40 +466,34 @@ begin
 
   error_detect : process(reset, clock) 
   begin
-    if (reset = '1') then       
-        error        <= (others => '0');
+    if (reset = '1') then		
+      error        <= (others => '0');
     elsif rising_edge(clock) then
-       if(data_start = '1' and next_state /= IDLE) then
-          error(0)   <= '1';
-        end if;
-        
-        -- packets lengh sent from data_ram exceeds payload_len 
---      if(data_valid = '1' and next_state /= DATA) then
---        error(1)   <= '1';
---      end if;  
+	  if(data_start = '1' and next_state /= IDLE) then
+        error(0)   <= '1';
+    end if;
+		
+		-- packets lengh sent from data_ram exceeds payload_len 
+--		if(data_valid = '1' and next_state /= DATA) then
+--		  error(1)   <= '1';
+--		end if;  
 
 
-        if(data_valid = '1' and next_state /= DATA) then
-          if( next_state = DONE) then
-            error(1) <='1';
-          elsif( next_state = DISCRIMINATOR) then    
-            error(2) <='1';
-          elsif( next_state = IDLE) then     
-            error(3) <='1';          
-          else
-            error(4) <='1';
-            
-          end if;   
-         
-        
-        end if;         
-        
-    end if;     
-        
+      if(data_valid = '1' and next_state /= DATA) then
+        if( next_state = DONE) then
+          error(1) <='1';
+        elsif( next_state = DISCRIMINATOR) then	 
+          error(2) <='1';
+        elsif( next_state = IDLE) then	 
+          error(3) <='1';			 
+        else
+          error(4) <='1';
+			
+		end if;	
+      end if; 		
+    end if;		
+		
   end process error_detect;
 end architecture behavior;
-
-
-
 
 

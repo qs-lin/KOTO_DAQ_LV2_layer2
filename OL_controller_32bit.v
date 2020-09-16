@@ -7,7 +7,7 @@
 -- Author     : Qisen Lin  <qslin@uchicago.edu>
 -- Company    : University of Chicago
 -- Created    : 2019-01-01
--- Last update: 2020-01-03
+-- Last update: 2019-02-03
 -- Platform   :
 -------------------------------------------------------------------------------
 -- Description:
@@ -20,12 +20,12 @@
 -- delay_mode : 1 flipped and shifted. We can correct it once we received data
 -- delay_mode : 2 alignemnt is not working
 -------------------------------------------------------------------------------
--- Copyright (c) 2019 University of Chicago
+-- Copyright (c) 2018 University of Chicago
 -------------------------------------------------------------------------------
 -- Revisions  :
 -- Date        Version  Author  Description
--- 2019-11-01  1.0      Qisen   Send out {32b'counter} 
--- 2019-12-01  2.0      Qisen   Send out {16b'counter, 16b'counter+1} 
+-- 2019-01-01  1.0      Qisen   Send out {32b'counter} 
+-- 2019-02-03  2.0      Qisen   Send out {16b'counter, 16b'counter+1} 
 -------------------------------------------------------------------------------
 */
 

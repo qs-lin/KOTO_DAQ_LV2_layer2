@@ -1,12 +1,5 @@
 --Configuration controller for triple-speed ethernet module
---Written by
---Ryan Thomas
 --2018-10-15
-
---Modified by Qisen 2020-02-16
---Change the config of MAC_CFG_FIFO_TX_SE  
---We need the difference between  MAC_CFG_FIFO_TX_AF and MAC_CFG_FIFO_TX_SE
---to solve the backpressure
 
 --Mostly functional, features like SW reset and altering configuration
 --are unimplemented
@@ -872,4 +865,3 @@ begin
   end process watch_dog;
 
 end architecture behavior;
-
