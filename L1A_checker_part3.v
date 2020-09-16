@@ -65,10 +65,10 @@ begin
   if(reset)
   begin
     //start = 4'b0;
-	 mode                   = 2'b0;
-	 L1A_align              = 1'b0;
-	 error                  = 2'b0;
-	 one_adc_finish_check   = 1'b0;
+    mode                   = 2'b0;
+    L1A_align              = 1'b0;
+    error                  = 2'b0;
+    one_adc_finish_check   = 1'b0;
 //	 pipe00                 = 14'b0;
 //	 pipe01                 = 14'b0;
 //	 pipe02                 = 14'b0;
@@ -95,48 +95,48 @@ begin
   begin
 
     if(trig_in[0] && start_check[0]) // L1A of 0th OFC has been updated
-	 begin
-	   if(check_in_progress)
-	   begin
-	     mode = mode +1'b1;
-		 error[0] = 1'b0;
-		 one_adc_finish_check = 1'b1;
+      begin
+        if(check_in_progress)
+          begin
+            mode = mode +1'b1;
+            error[0] = 1'b0;
+            one_adc_finish_check = 1'b1;
+          end	
+        else
+        begin
+          mode = mode;
+          error[0] = 1'b1;
+        end
       end	
-		else
-		begin
-		  mode = mode;
-		  error[0] = 1'b1;
-		end
-	 end	
     else
-	   one_adc_finish_check = 1'b0;
-		
+      one_adc_finish_check = 1'b0;
+
   end
   
   
   2'b01: // check last adc
   begin
     if(trig_in[1] && start_check[1])
-	 begin
-	   if(L1A_01==L1A_00)     //compare L1A between 1st and oth OFC
-		begin
-		  error[1] = 1'b0;
-		  mode = 2'b0;
-		  one_adc_finish_check = 1'b1;
-		  L1A_align = (error == 2'b0) ? 1'b1:1'b0;
-		end
-		else
-		begin
-		  error[1] = 1'b1;
-		  mode = mode;
-		end
+    begin
+      if(L1A_01==L1A_00)     //compare L1A between 1st and oth OFC
+        begin
+          error[1] = 1'b0;
+          mode = 2'b0;
+          one_adc_finish_check = 1'b1;
+          L1A_align = (error == 2'b0) ? 1'b1:1'b0;
+        end
+      else
+        begin
+          error[1] = 1'b1;
+          mode = mode;
+        end
 
-	 end
+    end
     else
-	 begin
-	   one_adc_finish_check = 1'b0;
-	   L1A_align = 1'b0;	
-	 end	
+    begin
+      one_adc_finish_check = 1'b0;
+      L1A_align = 1'b0;	
+    end	
   end  
 	
   endcase  

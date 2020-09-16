@@ -32,11 +32,11 @@ entity Ethernet_frame_generator is
     reset           : in  std_logic;
     ff_tx_rdy       : in  std_logic;
     ff_tx_a_full    : in  std_logic;
-	--Sent from mem_read_control. Initiate ethernet frame
+    --Sent from mem_read_control. Initiate ethernet frame
     data_start      : in  std_logic;
-	--Input data
-	data_in         : in  std_logic_vector(31 downto 0);
-	data_valid      : in  std_logic;
+    --Input data
+    data_in         : in  std_logic_vector(31 downto 0);
+    data_valid      : in  std_logic;
     --Output data
     ff_tx_data      : out std_logic_vector(31 downto 0);
     --High when data is valid
@@ -50,34 +50,34 @@ entity Ethernet_frame_generator is
     --Ethernet frame header
     ether_header_0  : in  std_logic_vector(31 downto 0);       -- dma[47..16]
     ether_header_1  : in  std_logic_vector(31 downto 0);       -- dma[15..0] & sma[47..32]
-	ether_header_2  : in  std_logic_vector(31 downto 0);       -- sma[31..0]
-	-- Standard Ethernet 0x0800; Jumbo Ethernet 0x8870
+    ether_header_2  : in  std_logic_vector(31 downto 0);       -- sma[31..0]
+    -- Standard Ethernet 0x0800; Jumbo Ethernet 0x8870
     ether_type      : in  std_logic_vector(15 downto 0);
     --IPv4 Header info
     source_ip       : in  std_logic_vector(31 downto 0);
     dest_ip         : in  std_logic_vector(31 downto 0);
-	port_id         : in  std_logic_vector(31 downto 0);
+    port_id         : in  std_logic_vector(31 downto 0);
 	 
-	--Interface to mem_read_control
-	--header is done. You can send the data in
-	payload_rdy     : out std_logic;
-	--current event is done. You can send another packet
-	fg_rdy          : out std_logic;
-	 
-	error           : out std_logic_vector(4 downto 0);
-	-- handling buffer data. Forbid mem_read_control from requiring new data from the ram
-	is_buff         : out std_logic;
-	is_valid        : out std_logic;
-	go_to_buff_port : out std_logic;
-	ff_tx_septy     : in  std_logic;
-	event_id        : in  std_logic_vector(31 downto 0);
-	nListenPorts    : in  std_logic_vector(3 downto 0);
-	chunk_id        : in  std_logic_vector(31 downto 0);
-	crate_id        : in  std_logic_vector(7 downto 0);
-	error_buff      : out std_logic;
-	spill_id        : in  std_logic_vector(8 downto 0);
-	lv2_packet      : in  std_logic_vector(14 downto 0);
-	lv2_info_valid  : in  std_logic
+    --Interface to mem_read_control
+    --header is done. You can send the data in
+    payload_rdy     : out std_logic;
+    --current event is done. You can send another packet
+    fg_rdy          : out std_logic;
+
+    error           : out std_logic_vector(4 downto 0);
+    -- handling buffer data. Forbid mem_read_control from requiring new data from the ram
+    is_buff         : out std_logic;
+    is_valid        : out std_logic;
+    go_to_buff_port : out std_logic;
+    ff_tx_septy     : in  std_logic;
+    event_id        : in  std_logic_vector(31 downto 0);
+    nListenPorts    : in  std_logic_vector(3 downto 0);
+    chunk_id        : in  std_logic_vector(31 downto 0);
+    crate_id        : in  std_logic_vector(7 downto 0);
+    error_buff      : out std_logic;
+    spill_id        : in  std_logic_vector(8 downto 0);
+    lv2_packet      : in  std_logic_vector(14 downto 0);
+    lv2_info_valid  : in  std_logic
     );
 end Ethernet_frame_generator;
 
@@ -95,12 +95,12 @@ architecture behavior of Ethernet_frame_generator is
   signal pipe_dval          : std_logic := '1';
   
   type state_type is (IDLE, CALCULATION, WAIT_SEC_EMPTY, WAIT_HEADER,
-							 ETH0, ETH1, ETH2, ETH3, 
+                      ETH0, ETH1, ETH2, ETH3, 
                       IP0,  IP1,  IP_PAUSE0,  IP_PAUSE1, IP_PAUSE2,  --Pause for checksum computation
                       IP2,  IP3,  IP4,
                       UDP0, UDP1, EVENT_ID_STATE, CHUNK_ID_STATE, DISCRIMINATOR,
                       DATA, --BUFFER_WAIT, BUFFER_STATE, 
-							 DONE
+                      DONE
                       );
   signal state      : state_type := IDLE;
   signal next_state : state_type := IDLE;
@@ -187,30 +187,30 @@ begin
   state_machine : process(reset, clock)
     variable nstate         : state_type := IDLE; 
     variable counter_sent   : integer    := 0;
-	variable counter_head   : integer    := 0;
-	variable dest_port      : unsigned(15 downto 0):= (others => '0');	 
+    variable counter_head   : integer    := 0;
+    variable dest_port      : unsigned(15 downto 0):= (others => '0');	 
 
   begin
     if (reset = '1') then
-	  --interface
-	  error_buff       <= '0';     
+      --interface
+      error_buff       <= '0';     
       ff_tx_data       <= (others => '0');
       ff_tx_wren       <= '0';
       ff_tx_eop        <= '0';
       ff_tx_sop        <= '0';
       fg_rdy           <= '0';
       payload_rdy      <= '0';
-		
+
       --variable
       next_state       <= IDLE;
       counter_sent     := 0;
       counter_head     := 0;
-	  dest_port        := ( port_id_sig(15 downto 0) );	
+      dest_port        := ( port_id_sig(15 downto 0) );	
 
       --signal			
     elsif rising_edge(clock) then
-	 
-		
+
+
       case next_state is
         when IDLE =>
 
@@ -255,23 +255,23 @@ begin
           eth_header(3) <= ether_header_2_sig(15 downto 0) & ether_type_sig;
 
           next_state <= WAIT_SEC_EMPTY;
+
+        -- make sure the tse_buffer has enough space to send ethernet_frame data	 
+        when WAIT_SEC_EMPTY =>
+          if( ff_tx_septy = '1') then 
+            next_state      <= WAIT_HEADER;
+          else
+            next_state      <= next_state; 
+          end if;	
 			 
-		  -- make sure the tse_buffer has enough space to send ethernet_frame data	 
-		  when WAIT_SEC_EMPTY =>
-		    if( ff_tx_septy = '1') then 
-			  next_state      <= WAIT_HEADER;
-			else
-			  next_state      <= next_state; 
-			end if;	
-			 
-		  when WAIT_HEADER =>
-		    counter_head     := counter_head + 1;
-		    if(counter_head = 14) then 
-			  next_state      <= ETH0;
-			  counter_head     := 0;
-			else
-			  next_state      <= next_state; 
-			end if;	
+        when WAIT_HEADER =>
+          counter_head     := counter_head + 1;
+          if(counter_head = 14) then 
+            next_state      <= ETH0;
+			counter_head     := 0;
+          else
+            next_state      <= next_state; 
+          end if;	
 						 
         when ETH0 =>
           ff_tx_data        <= eth_header(0);
@@ -306,18 +306,18 @@ begin
           next_state        <= IP_PAUSE1;
 
 			 
---Based on the simulation, we only need pause for 1 clock.
---But we can stil pause for two for safety
+        --Based on the simulation, we only need pause for 1 clock.
+        --But we can stil pause for two for safety
 
         when IP_PAUSE1 =>
           ff_tx_data        <= (others => '1');
           ff_tx_wren        <= '0';
           next_state        <= IP_PAUSE2;      
 
-		  -- This wait stage is added back on 2019/12/12 by Qisen
-		  -- when step=8, not sure whether ip_checksum is assigned before or after 
-		  -- ff_tx_data is assigned. So add this back to make sure ip_checksum is updated 
-		  -- before encapsulated in IP2  
+          -- This wait stage is added back on 2019/12/12 by Qisen
+          -- when step=8, not sure whether ip_checksum is assigned before or after 
+          -- ff_tx_data is assigned. So add this back to make sure ip_checksum is updated 
+          -- before encapsulated in IP2  
         when IP_PAUSE2 =>
           ff_tx_data        <= (others => '1');
           ff_tx_wren        <= '0';
@@ -347,10 +347,10 @@ begin
 
         when UDP1 =>
           -- Length in bytes followed by (unused) checksum
-			 -- 2 UDP header + 3 LV3 header 
+          -- 2 UDP header + 3 LV3 header 
           ff_tx_data    <= std_logic_vector(resize(unsigned(payload_len)+to_unsigned(5, payload_len'length), 14))& "00" & X"00_00";
           next_state    <= EVENT_ID_STATE;
-			 
+
         when EVENT_ID_STATE =>
           --Event ID
           ff_tx_data    <= event_id_sig;
@@ -360,23 +360,22 @@ begin
           --Chunk ID
           ff_tx_data    <= chunk_id_sig; 
           next_state    <= DISCRIMINATOR;	
-			 
+
         when DISCRIMINATOR =>
           --Used to discriminate payload and footer
           if( unsigned(payload_len) = 0) then
             --ff_tx_data    <= X"080000" & crate_id;
             --ff_tx_data    <= X"000" & "000" & spill_id & crate_id;				
             ff_tx_data    <= lv2_packet & spill_id & crate_id;
-			next_state    <= DONE;
-			ff_tx_eop     <= '1';
+            next_state    <= DONE;
+            ff_tx_eop     <= '1';
             payload_rdy   <= '1';	
           else
-		    ff_tx_data    <= (others => '0');
+            ff_tx_data    <= (others => '0');
             next_state    <= DATA;		
             payload_rdy   <= '1'; 
           end if;	
-			 			 
-			 
+
         when DATA =>  
           payload_rdy     <= '0';	  
           --ff_tx_data    <= std_logic_vector(to_unsigned(counter, ff_tx_data'length));
@@ -386,11 +385,11 @@ begin
           if(data_valid  = '1') then
             ff_tx_wren    <= '1';
             counter_sent  := counter_sent + 1;
-		  else 
-		    ff_tx_wren    <= '0';
-		    counter_sent  := counter_sent;
-	      end if;			
-			 
+          else 
+            ff_tx_wren    <= '0';
+            counter_sent  := counter_sent;
+          end if;			
+
           if(counter_sent>=to_integer(unsigned(payload_len))) then
             --if(counter_v1>=to_integer(unsigned(payload_len)) and  ff_tx_septy = '1') then		 
             --ff_tx_data      <= X"0AAAAAAA";		 
@@ -398,9 +397,9 @@ begin
             ff_tx_eop       <= '1';
             --ff_tx_wren_sig  <= '1';
           end if;		
-		  
+
         when DONE =>
-		  fg_rdy            <= '1'; 
+          fg_rdy            <= '1'; 
           ff_tx_data        <= (others => '0');
           ff_tx_eop         <= '0';
           ff_tx_wren        <= '0';
@@ -445,9 +444,9 @@ begin
         else
           step := -1;
         end if;
-		-- wait for one clock to finish the CALCULATION state  
-		elsif (step<=0) then  
-		  step := step +1;
+        -- wait for one clock to finish the CALCULATION state  
+        elsif (step<=0) then  
+          step := step +1;
       elsif (step <= ip_header'length) then
         --Add everything to our sum
         sum  := sum + unsigned(ip_header(step-1)(31 downto 16))+unsigned(ip_header(step-1)(15 downto 0));
@@ -469,7 +468,7 @@ begin
     if (reset = '1') then		
       error        <= (others => '0');
     elsif rising_edge(clock) then
-	  if(data_start = '1' and next_state /= IDLE) then
+      if(data_start = '1' and next_state /= IDLE) then
         error(0)   <= '1';
     end if;
 		

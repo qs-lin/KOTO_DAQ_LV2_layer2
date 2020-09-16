@@ -18,7 +18,7 @@ begin
   if(reset)
   begin
     rd_addr = 6'b0;
-	rd_req = 1'b0;
+    rd_req = 1'b0;
   end
  
 
@@ -35,7 +35,7 @@ begin
   else
   begin
     rd_req = 1'b0;
-	rd_addr = rd_addr;
+    rd_addr = rd_addr;
   
   end
 

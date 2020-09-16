@@ -17,7 +17,7 @@ begin
   if(reset)
   begin
     error             = 2'b0;
-	 // add on 2019/11/18. Otherwise the signal will stay high if some errors occur. 
+    // add on 2019/11/18. Otherwise the signal will stay high if some errors occur. 
     start_check       = 2'b0;
     check_in_progress = 1'b0;
   end
@@ -25,7 +25,7 @@ begin
   if(need_check)
   begin
     if(start_check==2'b0)
-	   start_check = start_check + 1'b1;
+      start_check = start_check + 1'b1;
     else  
       error[0] = 1'b1;                     //the previous reading has not been finished, yet the new reading starts -> error = 1'b1
   end
