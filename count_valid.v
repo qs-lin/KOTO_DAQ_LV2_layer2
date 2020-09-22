@@ -16,7 +16,7 @@ begin
   begin
     timer    = 10'b0;
     dval     = 1'b0;
-	aligned  = 1'b0;
+    aligned  = 1'b0;
 	tlk_pipe = 1'b0;
   end
 

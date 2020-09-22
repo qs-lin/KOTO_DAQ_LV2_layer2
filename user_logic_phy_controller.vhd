@@ -11,12 +11,12 @@ entity user_logic_phy_controller is
     phy_mgmt_waitrequest  : in  std_logic;
     phy_mgmt_write        : out std_logic;
     phy_mgmt_writedata    : out std_logic_vector(31 downto 0) := (others => '0')
-	 );
+    );
 end entity user_logic_phy_controller;
 
 architecture behavioral of user_logic_phy_controller is
-	type phy_mgmt_fsm_type is (idle,requestsync);
-	signal phy_mgmt_fsm : phy_mgmt_fsm_type := idle;
+    type phy_mgmt_fsm_type is (idle,requestsync);
+    signal phy_mgmt_fsm : phy_mgmt_fsm_type := idle;
 begin
 -- concurrent signal assignments
 	proc_sync : process (phy_mgmt_clk, phy_mgmt_clk_reset, phy_mgmt_waitrequest, phy_mgmt_fsm) is

@@ -1,5 +1,5 @@
 -- generate this from block diagram file by Qisen
--- use VHD declaration to show the connection between each modul
+-- use VHD declaration to show the connection between each module
 
 
 -- Copyright (C) 1991-2015 Altera Corporation. All rights reserved.

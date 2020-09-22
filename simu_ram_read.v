@@ -18,8 +18,8 @@ begin
   begin
     in_progress = 1'b0;
     counter     = 10'b0;
-	rd_req      = 1'b0;
-	rd_addr     = 10'b0;
+    rd_req      = 1'b0;
+    rd_addr     = 10'b0;
   end
 
   in_progress = trigger ? 1'b1 : in_progress;
@@ -27,17 +27,17 @@ begin
   if(in_progress)
   begin
     rd_req  = 1'b1;
-	counter = counter + 1'b1;
+    counter = counter + 1'b1;
   end
   else
   begin
     rd_req  = 1'b0;
-	counter = 10'b0;
+    counter = 10'b0;
   end	 
   if(counter == total_number)
   begin
     in_progress = 1'b0;
-	 //counter = 15'b0;
+    //counter = 15'b0;
   
   end
   

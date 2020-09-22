@@ -102,15 +102,15 @@ begin
   if((evt_tx-evt_tx_pipe)==1'b1)
   begin
     if(need_read)
-	 begin
-	   need_check = 1'b1;
-	   lock       = 1'b1;
-	 end
+    begin
+      need_check = 1'b1;
+      lock       = 1'b1;
+    end
     else
-	 begin
-	   need_check = 1'b0;
-	   lock       = 1'b0;	 
-	 end
+    begin
+      need_check = 1'b0;
+      lock       = 1'b0;	 
+    end
   
   end
   else
@@ -118,10 +118,10 @@ begin
     if(need_read)
     begin
       if(lock==1'b0)
-	   begin
-	     need_check = 1'b1;
-	     lock       = 1'b1;
-	   end  
+      begin
+        need_check = 1'b1;
+        lock       = 1'b1;
+      end  
       else
       begin
         need_check = 1'b0;
@@ -131,7 +131,7 @@ begin
     else
     begin
       need_check = 1'b0;
-		lock       = 1'b0;
+      lock       = 1'b0;
     end	 
   end
 

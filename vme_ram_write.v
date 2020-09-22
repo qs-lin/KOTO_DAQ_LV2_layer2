@@ -15,23 +15,23 @@ begin
   if(rst)
   begin
     cnt      = 10'b0;
-	wr_ena   = 1'b0;
+    wr_ena   = 1'b0;
 	wr_addr  = 10'b0;
-	start    = 1'b0;
+    start    = 1'b0;
   end
   
   start = ( trig_in && ~start ) ? 1'b1 : start;
   if(start)
   begin
     wr_ena  = 1'b1;
-	wr_addr = wr_addr + 1'b1;
+    wr_addr = wr_addr + 1'b1;
     cnt     = cnt + 1'b1;
   end
   else
   begin
     cnt     = 10'b0;
-	wr_ena  = 1'b0;
-	wr_addr = 10'b0;	 	 
+    wr_ena  = 1'b0;
+    wr_addr = 10'b0;	 	 
   end	 
   
   if(cnt == 10'b11_1111_1111)

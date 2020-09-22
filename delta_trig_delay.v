@@ -15,8 +15,8 @@ begin
   if(rst)
   begin
     cnt      = 16'b0;
-	 trig_out = 1'b0;
-	 start    = 1'b0;
+    trig_out = 1'b0;
+    start    = 1'b0;
   end
   
   start = ( trig_in && ~start )? 1'b1 : start;
@@ -31,12 +31,12 @@ begin
   begin
     trig_out = 1'b1;
     start    = 1'b0;
-	 cnt      = 16'b0;
+    cnt      = 16'b0;
   end
   else
   begin
     trig_out = 1'b0;
-	 start    = start;
+    start    = start;
   end
   
 end 

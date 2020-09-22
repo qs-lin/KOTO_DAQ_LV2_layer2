@@ -113,7 +113,7 @@ begin
             else if( (pipe_rx[0][31:16]-pipe_rx[0][15:0])==2'b10 )
               delay_mode = 2'b01;
             else
-             delay_mode = 2'b10;
+              delay_mode = 2'b10;
         end
         
         counter = counter + 1'b1;

@@ -12,9 +12,9 @@ begin
  
   if(reset)
     input_mode = 2'b0;
-	
 
-	
+
+
   input_mode = trig_00 ? 2'b00 : input_mode;
   input_mode = trig_01 ? 2'b01 : input_mode;
 

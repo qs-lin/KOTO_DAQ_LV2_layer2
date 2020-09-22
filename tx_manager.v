@@ -17,28 +17,28 @@ begin
   if(reset)
   begin
     start_read = 2'b0;
-	error = 2'b0;
-	evt_tx = 16'b0;  
+    error = 2'b0;
+    evt_tx = 16'b0;  
   end
 
   if(L1A_Align)    //one event has been checked. We should start reading this one out
   begin
     if(start_read==2'b0)
-	 begin
-	   if(need_read)
-	     start_read = start_read + 1'b1;
-	   else
-		 error[0] = 1'b1;  
+    begin
+      if(need_read)
+        start_read = start_read + 1'b1;
+      else
+        error[0] = 1'b1;  
     end
-	 else
-	   error[1] = 1'b1;    //previous event reading has not finished. Yet we want to start new one
+    else
+      error[1] = 1'b1;    //previous event reading has not finished. Yet we want to start new one
   end
 
   
   if(one_adc_finish_read)
   begin
     if(start_read[1]==1'b1)
-	   evt_tx = evt_tx + 1'b1;
+      evt_tx = evt_tx + 1'b1;
   	 	
     start_read = start_read << 1'b1;
   end
